@@ -1,0 +1,94 @@
+Profiles:
+    OrdererGenesis:
+      Capabilities:
+        <<: *ChannelCapabilities
+      Orderer:
+        <<: *OrdererDefaults
+        Organizations:
+          - *OrdererOrg
+        Capabilities:
+          <<: *OrdererCapabilities
+      Consortiums:
+        MyFirstConsortium:
+          Organizations:
+            - *Importer 
+            - *Distributor
+            - *Customer
+    channelthreeorgs:
+      Consortium: MyFirstConsortium
+      Application:
+        <<: *ApplicationDefaults
+        Organizations:
+          - *Importer
+          - *Distributor
+          - *Customer
+        Capabilities:
+          <<: *ApplicationCapabilities
+
+
+# Organizations
+
+Organizations:
+
+  - &OrdererOrg
+    Name: OrderingService
+    ID: OrdererMSP
+    MSPDir: crypto-config/ordererOrganizations/food-network.com/msp
+
+  - &Importer
+    Name: ImporterMSP
+    ID: ImporterMSP
+    MSPDir: crypto-config/peerOrganizations/importer.food-network.com/msp
+    AnchorPeers:
+      - Host: peer0.importer.food-network.com
+        Port: 7051
+
+  - &Distributor
+    Name: DistributorMSP
+    ID: DistributorMSP
+    MSPDir: crypto-config/peerOrganizations/distributor.food-network.com/msp
+    AnchorPeers:
+      - Host: peer0.distributor.food-network.com
+        Port: 7051
+
+  - &Customer
+    Name: CustomerMSP
+    ID: CustomerMSP
+    MSPDir: crypto-config/peerOrganizations/customer.food-network.com/msp
+    AnchorPeers:
+      - Host: peer0.customer.food-network.com
+        Port: 7051
+
+# Orderer
+
+Orderer: &OrdererDefaults
+
+  OrdererType: solo
+  Addresses: 
+    - orderer.food-network.com:7050
+  BatchTimeout: 2s
+  BatchSize:
+    MaxMessageCount: 10
+    AbsoluteMaxBytes: 99 MB
+    PreferredMaxBytes: 512 KB
+  Kafka:
+    Brokers: 
+      - 127.0.0.1:9092
+
+  Organizations:
+
+# Application
+
+Application: &ApplicationDefaults
+
+  Organizations:
+
+# Capabilities
+
+Capabilities:
+    Global: &ChannelCapabilities
+        V1_1: true
+    Orderer: &OrdererCapabilities
+        V1_1: true
+    Application: &ApplicationCapabilities
+        V1_1: true
