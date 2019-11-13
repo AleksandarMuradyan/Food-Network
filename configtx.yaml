@@ -14,7 +14,7 @@ Profiles:
             - *Importer 
             - *Distributor
             - *Customer
-    channelthreeorgs:
+    channelthree:
       Consortium: MyFirstConsortium
       Application:
         <<: *ApplicationDefaults
@@ -24,6 +24,8 @@ Profiles:
           - *Customer
         Capabilities:
           <<: *ApplicationCapabilities
+  
+
 
 
 # Organizations

@@ -9,7 +9,7 @@ services:
       - ORDERER_GENERAL_LOGLEVEL=INFO
       - ORDERER_GENERAL_LISTENADDRESS=0.0.0.0
       - ORDERER_GENERAL_GENESISMETHOD=file
-      - ORDERER_GENERAL_GENESISFILE=/var/hyperledger/orderer/genesis.block
+      - ORDERER_GENERAL_GENESISFILE=/opt/gopath/fabric-samples/food-network/channel-artifacts/genesis.block
       - ORDERER_GENERAL_LOCALMSPID=OrdererMSP
       - ORDERER_GENERAL_LOCALMSPDIR=/var/hyperledger/orderer/msp
       # enabled TLS
@@ -20,7 +20,7 @@ services:
     working_dir: /opt/gopath/src/github.com/hyperledger/fabric
     command: orderer
     volumes:
-    - ../channel-artifacts/genesis.block:/var/hyperledger/orderer/orderer.genesis.block
+    - ../channel-artifacts/genesis.block:/opt/gopath/fabric-samples/food-network/channel-artifacts/genesis.block
     - ../crypto-config/ordererOrganizations/food-network.com/orderers/orderer.food-network.com/msp:/var/hyperledger/orderer/msp
     - ../crypto-config/ordererOrganizations/food-network.com/orderers/orderer.food-network.com/tls/:/var/hyperledger/orderer/tls
     - orderer.food-network.com:/var/hyperledger/production/orderer
@@ -35,7 +35,7 @@ services:
     environment:
       - CORE_PEER_ID=peer0.importer.food-network.com
       - CORE_PEER_ADDRESS=peer0.importer.food-network.com:7051
-      - CORE_PEER_GOSSIP_BOOTSTRAP=peer1.importer.food-network.com:7051
+      - CORE_PEER_GOSSIP_BOOTSTRAP=peer0.importer.food-network.com:7051
       - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer0.importer.food-network.com:7051
       - CORE_PEER_LOCALMSPID=ImporterMSP
     volumes:
@@ -45,28 +45,8 @@ services:
         - peer0.importer.food-network.com:/var/hyperledger/production
     ports:
       - 7051:7051
-      - 7053:7053
 
-  peer1.importer.food-network.com:
-    container_name: peer1.importer.food-network.com
-    extends:
-      file: peer-base.yaml
-      service: peer-base
-    environment:
-      - CORE_PEER_ID=peer1.importer.food-network.com
-      - CORE_PEER_ADDRESS=peer1.importer.food-network.com:7051
-      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer1.importer.food-network.com:7051
-      - CORE_PEER_GOSSIP_BOOTSTRAP=peer0.importer.food-network.com:7051
-      - CORE_PEER_LOCALMSPID=ImporterMSP
-    volumes:
-        - /var/run/:/host/var/run/
-        - ../crypto-config/peerOrganizations/importer.food-network.com/peers/peer1.importer.food-network.com/msp:/etc/hyperledger/fabric/msp
-        - ../crypto-config/peerOrganizations/importer.food-network.com/peers/peer1.importer.food-network.com/tls:/etc/hyperledger/fabric/tls
-        - peer1.importer.food-network.com:/var/hyperledger/production
-
-    ports:
-      - 8051:7051
-      - 8053:7053
+  
 
   peer0.distributor.food-network.com:
     container_name: peer0.distributor.food-network.com
@@ -77,7 +57,7 @@ services:
       - CORE_PEER_ID=peer0.distributor.food-network.com
       - CORE_PEER_ADDRESS=peer0.distributor.food-network.com:7051
       - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer0.distributor.food-network.com:7051
-      - CORE_PEER_GOSSIP_BOOTSTRAP=peer1.distributor.food-network.com:7051
+      - CORE_PEER_GOSSIP_BOOTSTRAP=peer0.distributor.food-network.com:7051
       - CORE_PEER_LOCALMSPID=DistributorMSP
     volumes:
         - /var/run/:/host/var/run/
@@ -86,27 +66,8 @@ services:
         - peer0.distributor.food-network.com:/var/hyperledger/production
     ports:
       - 9051:7051
-      - 9053:7053
 
-  peer1.distributor.food-network.com:
-    container_name: peer1.distributor.food-network.com
-    extends:
-      file: peer-base.yaml
-      service: peer-base
-    environment:
-      - CORE_PEER_ID=peer1.distributor.food-network.com
-      - CORE_PEER_ADDRESS=peer1.distributor.food-network.com:7051
-      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer1.distributor.food-network.com:7051
-      - CORE_PEER_GOSSIP_BOOTSTRAP=peer0.distributor.food-network.com:7051
-      - CORE_PEER_LOCALMSPID=DistributorMSP
-    volumes:
-        - /var/run/:/host/var/run/CORE_PEER_LOCALMSPID
-        - ../crypto-config/peerOrganizations/distributor.food-network.com/peers/peer1.distributor.food-network.com/msp:/etc/hyperledger/fabric/msp
-        - ../crypto-config/peerOrganizations/distributor.food-network.com/peers/peer1.distributor.food-network.com/tls:/etc/hyperledger/fabric/tls
-        - peer1.distributor.food-network.com:/var/hyperledger/production
-    ports:
-      - 10051:7051
-      - 10053:7053
+
 
   peer0.customer.food-network.com:
     container_name: peer0.customer.food-network.com
@@ -117,7 +78,7 @@ services:
       - CORE_PEER_ID=peer0.customer.food-network.com
       - CORE_PEER_ADDRESS=peer0.customer.food-network.com:7051
       - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer0.customer.food-network.com:7051
-      - CORE_PEER_GOSSIP_BOOTSTRAP=peer1.customer.food-network.com:7051
+      - CORE_PEER_GOSSIP_BOOTSTRAP=peer0.customer.food-network.com:7051
       - CORE_PEER_LOCALMSPID=CustomerMSP
     volumes:
         - /var/run/:/host/var/run/
@@ -126,24 +87,6 @@ services:
         - peer0.customer.food-network.com:/var/hyperledger/production
     ports:
       - 11051:7051
-      - 11053:7053
 
-  peer1.customer.food-network.com:
-    container_name: peer1.customer.food-network.com
-    extends:
-      file: peer-base.yaml
-      service: peer-base
-    environment:
-      - CORE_PEER_ID=peer1.customer.food-network.com
-      - CORE_PEER_ADDRESS=peer1.customer.food-network.com:7051
-      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer1.customer.food-network.com:7051
-      - CORE_PEER_GOSSIP_BOOTSTRAP=peer0.customer.food-network.com:7051
-      - CORE_PEER_LOCALMSPID=CustomerMSP
-    volumes:
-        - /var/run/:/host/var/run/
-        - ../crypto-config/peerOrganizations/customer.food-network.com/peers/peer1.customer.food-network.com/msp:/etc/hyperledger/fabric/msp
-        - ../crypto-config/peerOrganizations/customer.food-network.com/peers/peer1.customer.food-network.com/tls:/etc/hyperledger/fabric/tls
-        - peer1.customer.food-network.com:/var/hyperledger/production
-    ports:
-      - 12051:7051
-      - 12053:7053
+
+ 
